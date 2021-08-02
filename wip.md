@@ -3,4 +3,4 @@
   [x] (maybe) search when string.length > 3
   [] TODO maybe optimise how we search
   [x] Maybe remove controlled input to become uncontrolled
-[] implement pagination
+[x] implement pagination

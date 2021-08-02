@@ -4,7 +4,8 @@ import { searchAirports } from '../../models/airport'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const searchText = req.query.text as string
-  const filteredAirports = await searchAirports(searchText)
+  const searchPage = Number(req.query.page)
+  const filteredAirports = await searchAirports(searchText, searchPage)
 
   res.status(200).json(filteredAirports)
 }

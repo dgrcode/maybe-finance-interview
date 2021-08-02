@@ -1,20 +1,23 @@
 import { NextPage } from 'next'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios, { CancelTokenSource } from "axios"
-import { debounce } from 'lodash.debounce'
 
 import Layout from '../components/layout'
 import Airport from '../types/airport'
 
 const Page: NextPage = () => {
   const [airports, setAirports] = useState<Airport[]>([])
+  const [searchText, setSearchText] = useState<string>('')
+  const [searchPage, setSearchPage] = useState<number>(0)
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null)
 
-  const handleSearchChanged = async evt => {
-    const inputValue = evt.target.value
 
-    if (inputValue.length < 3) {
-      setAirports([])
+  useEffect(() => {
+    triggerSearch()
+  }, [searchText, searchPage])
+
+  const triggerSearch = async () => {
+    if (searchText.length < 3) {
       return
     }
 
@@ -24,15 +27,28 @@ const Page: NextPage = () => {
     cancelTokenSourceRef.current = axios.CancelToken.source()
 
     try {
-      const response = await axios.get<Airport[]>(`/api/search?text=${inputValue}`, {
-        cancelToken: cancelTokenSourceRef.current.token
-      })
+      const response = await axios.get<Airport[]>(
+        `/api/search?text=${searchText}&page=${searchPage}`,
+        {
+          cancelToken: cancelTokenSourceRef.current.token
+        }
+      )
 
       console.log(response)
-      setAirports(response.data)
+      setAirports(prevAirports => [...prevAirports, ...response.data])
     } catch (error) {
       console.error(error.response)
     }
+  }
+
+  const handleSearchChanged = evt => {
+    setAirports([])
+    setSearchPage(0)
+    setSearchText(evt.target.value)
+  }
+
+  const handleLoadMore = () => {
+    setSearchPage(prevPage => prevPage + 1)
   }
 
   return <Layout>
@@ -46,6 +62,7 @@ const Page: NextPage = () => {
         <input 
           type='text'
           onChange={handleSearchChanged}
+          value={searchText}
         />
       </label>
     </div>
@@ -61,6 +78,12 @@ const Page: NextPage = () => {
           </div>
         </a>
       ))}
+      <button
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-4'
+        onClick={handleLoadMore}
+      >
+        Load more
+      </button>
     </div>
   </Layout>
 }
