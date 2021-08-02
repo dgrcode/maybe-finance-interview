@@ -1,6 +1,7 @@
 import { NextPage } from 'next'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import axios, { CancelTokenSource } from "axios"
+import debounce from 'lodash.debounce'
 
 import Layout from '../components/layout'
 import Airport from '../types/airport'
@@ -13,10 +14,16 @@ const Page: NextPage = () => {
 
 
   useEffect(() => {
-    triggerSearch()
-  }, [searchText, searchPage])
+    // debounce when typing
+    debouncedTriggerSearch(searchText, searchPage)
+  }, [searchText])
 
-  const triggerSearch = async () => {
+  useEffect(() => {
+    // don't debounce when loading more
+    triggerSearch(searchText, searchPage)
+  }, [searchPage])
+
+  const triggerSearch = async (searchText, searchPage) => {
     if (searchText.length < 3) {
       return
     }
@@ -40,6 +47,10 @@ const Page: NextPage = () => {
       console.error(error.response)
     }
   }
+
+  const debouncedTriggerSearch = useCallback(debounce(
+    triggerSearch
+  , 500), [])
 
   const handleSearchChanged = evt => {
     setAirports([])
