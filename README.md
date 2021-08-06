@@ -30,7 +30,7 @@ For detailed explanation on how things work, check out [Next.js docs](https://ne
 # Interview
 
 ## Debounce issue
-There's a working version of the code with the debounced call to the apis in the branch `debounce-working`.
+There's a working version of the code with the debounced call to the apis in the branch [`debounce-working`](https://github.com/dgrcode/maybe-finance-interview/tree/debounce-working).
 
 The problem seems to be related with using an async debounced function as the event handler. I'm still unsure about what was causing the issue, but the final version of the code with the api call made inside `useEffect` was very easily updated to use debounce.
 
@@ -44,7 +44,7 @@ The problem seems to be related with using an async debounced function as the ev
 
  In terms of UI, I don't see many edge cases, since having too many or too little results shouldn't be problematic thanks to having pagination. There are definitely UI improvements that should be made, but nothing that I can see in terms of edge cases. Maybe a UI edge case could be responsiveness (different screen sizes) and very long airport names. That should be easy to handle.
 
- In terms of performance, a big amount of users searching at the same time could be a performance issue when hitting the database at the same time. Debouncing requests (implemented in branch `debounce-working`) and cancelling stale ones should be a good solution for this edge case.
+ In terms of performance, a big amount of users searching at the same time could be a performance issue when hitting the database at the same time. Debouncing requests (implemented in branch [`debounce-working`](https://github.com/dgrcode/maybe-finance-interview/tree/debounce-working)) and cancelling stale ones should be a good solution for this edge case.
 
 2. How do you design a large project like Maybe for scalability/maintainability/reliability?
  In terms of scalability, any synchronous backend code should be fine in Next.js given that lambdas are created and they are great for scalability. For asynchronous code, like getting information from many databases, queuing processes, etc, having separate microservices handling different concerns could be a good solution.
